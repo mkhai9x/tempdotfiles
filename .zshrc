@@ -8,7 +8,7 @@ export ZSH="$HOME/.oh-my-zsh"
 # load a random theme each time oh-my-zsh is loaded, in which case,
 # to know which specific one was loaded, run: echo $RANDOM_THEME
 # See https://github.com/ohmyzsh/ohmyzsh/wiki/Themes
-ZSH_THEME="robbyrussell"
+# ZSH_THEME="robbyrussell" -- Disable ZSH THEME, using oh-my-posh instead
 
 # Set list of themes to pick from when loading at random
 # Setting this variable when ZSH_THEME=random will cause zsh to load
@@ -124,15 +124,29 @@ alias gac="git add . && git commit -a -m "
 alias gsu="git gpush --set-upstream origin "
 alias glog="git log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --branches"
 
-eval "$(oh-my-posh init zsh)"
 alias update="source ~/.zshrc"
 
 if [ "$TERM_PROGRAM" != "Apple_Terminal" ]; then
-  eval "$(oh-my-posh init zsh --config /root/themes/multiverse-neon.omp.json)"
+  eval "$(oh-my-posh init zsh --config ~/.poshthemes/multiverse-neon.omp.json)"
 fi
 
-export LC_ALL=en_IN.UTF-8
-export LANG=en_IN.UTF-8
+export LANG="en_AU.UTF-8"
+export LANGUAGE="en_AU:en"
+export LC_CTYPE="en_AU.UTF-8"
+export LC_NUMERIC="en_AU.UTF-8"
+export LC_TIME="en_AU.UTF-8"
+export LC_COLLATE="en_AU.UTF-8"
+export LC_MONETARY="en_AU.UTF-8"
+export LC_MESSAGES="en_AU.UTF-8"
+export LC_PAPER="en_AU.UTF-8"
+export LC_NAME="en_AU.UTF-8"
+export LC_ADDRESS="en_AU.UTF-8"
+export LC_TELEPHONE="en_AU.UTF-8"
+export LC_MEASUREMENT="en_AU.UTF-8"
+export LC_IDENTIFICATION="en_AU.UTF-8"
+export LC_ALL=
+
+set -o vi
 
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
