@@ -56,7 +56,7 @@ keymap.set("n", "<C-w><down>", "<C-w>-")
 --end, opts)
 
 keymap.set("n", "<leader>r", function()
-  require("craftzdog.hsl").replaceHexWithHSL()
+  require("mkhai9x.hsl").replaceHexWithHSL()
 end)
 
 keymap.set("n", "<leader>i", function()
