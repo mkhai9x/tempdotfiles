@@ -2,7 +2,10 @@ return {
   "jackMort/ChatGPT.nvim",
   event = "VeryLazy",
   config = function()
+    local home = os.getenv("HOME")
+
     require("chatgpt").setup({
+      api_key_cmd = "gpg --decrypt " .. home .. "/open_ai_key.txt.gpg",
       openai_params = {
         -- NOTE: model can be a function returning the model name
         -- this is useful if you want to change the model on the fly
