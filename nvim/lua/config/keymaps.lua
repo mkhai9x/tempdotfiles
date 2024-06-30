@@ -1,5 +1,6 @@
 local keymap = vim.keymap
 local opts = { noremap = true, silent = true }
+local Util = require("lazyvim.util")
 
 -- Do things without affecting the registers
 keymap.set("n", "x", '"_x')
@@ -62,3 +63,8 @@ end)
 keymap.set("n", "<leader>i", function()
   require("craftzdog.lsp").toggleInlayHints()
 end)
+
+-- Bordered lazygit, run this to update the lazygit config - reload the lazygit configs
+vim.keymap.set("n", "<leader>gg", function()
+  Util.terminal({ "lazygit" }, { cwd = Util.root(), esc_esc = false, ctrl_hjkl = false, border = "none" })
+end, { desc = "Lazygit (root dir)" })
