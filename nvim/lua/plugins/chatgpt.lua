@@ -32,6 +32,8 @@ return {
         n = 1,
       },
     })
+
+    vim.api.nvim_set_hl(0, "ChatGPTselectedMessage", { bg = "NONE", fg = "NONE" })
     local wk = require("which-key")
     wk.register({
       p = {
@@ -59,4 +61,3 @@ return {
     "nvim-telescope/telescope.nvim",
   },
 }
-
