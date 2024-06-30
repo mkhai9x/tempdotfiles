@@ -1,0 +1,206 @@
+- hosts: localhost
+  become: true
+  pre_tasks:
+    - name: Update the package list
+      tags: always
+      apt:
+        update_cache: yes
+  tasks:
+    - name: Install zsh
+      tags:
+        - ubuntu_packages
+      apt:
+        name: zsh
+        state: latest
+    - name: Install Git
+      tags:
+        - ubuntu_packages
+      apt:
+        name: git
+        state: latest
+    - name: Install Curl
+      tags:
+        - ubuntu_packages
+      apt:
+        name: curl
+        state: latest
+    - name: Install other packages - ripgrep, tree, fd-find, locales, bc, coreutils, gawk, jq, playerctl
+      tags:
+        - ubuntu_packages
+      apt:
+        name:
+          - ripgrep
+          - tree
+          - fd-find
+          - locales
+          - bc
+          - coreutils
+          - gawk
+          - jq
+          - playerctl
+        state: latest
+    - name: Install locale-gen en_US.UTF-8, locale-gen en_AU, locale-gen en_AU.UTF-8
+      tags:
+        - ubuntu_packages
+      shell: |
+        locale-gen en_US.UTF-8
+        locale-gen en_AU
+        locale-gen en_AU.UTF-8
+        locale-gen en_AU
+    - name: Change shell
+      tags:
+        - ohmyzsh
+      shell:
+        cmd: chsh -s `which zsh`
+    - name: Install Oh-my-zsh
+      tags:
+        - ohmyzsh
+      shell:
+        cmd: sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" || true
+    - name: Install zsh plugin auto suggesstions
+      tags:
+        - ohmyzsh
+      git:
+        repo: https://github.com/zsh-users/zsh-autosuggestions
+        dest: ~/.oh-my-zsh/plugins/zsh-autosuggestions
+    - name: Install zsh syntax highlighting
+      tags:
+        - ohmyzsh
+      git:
+        repo: https://github.com/zsh-users/zsh-syntax-highlighting.git
+        dest: ~/.oh-my-zsh/plugins/zsh-syntax-highlighting
+    - name: Install dependencies for Neovim
+      tags:
+        - nvim
+        - ubuntu_packages
+      apt:
+        name:
+          - ninja-build
+          - gettext
+          - cmake
+          - unzip
+          - curl
+          - build-essential
+        state: latest
+    - name: Clone Neovim repository
+      tags:
+        - nvim
+      git:
+        repo: https://github.com/neovim/neovim.git
+        dest: /usr/local/src/neovim
+        version: stable
+    - name: Build and install Neovim
+      tags:
+        - nvim
+      shell: |
+        cd /usr/local/src/neovim && \
+        make CMAKE_BUILD_TYPE=Release && \
+        make install
+    - name: Download and install Oh My Posh
+      tags:
+        - ohmyposh
+      shell:
+        cmd: curl -s https://ohmyposh.dev/install.sh | bash -s
+
+    - name: Remove existing Oh My Posh themes
+      tags:
+        - ohmyposh
+      file:
+        path: "~/.poshthemes"
+        state: absent
+    - name: Download all Oh My Posh themes
+      tags:
+        - ohmyposh
+      shell: |
+        mkdir -p ~/.poshthemes && \
+        curl -sL https://github.com/JanDeDobbeleer/oh-my-posh/releases/latest/download/themes.zip -o ~/.poshthemes/themes.zip && \
+        unzip ~/.poshthemes/themes.zip -d ~/.poshthemes && \
+        chmod u+rw ~/.poshthemes/*.json && \
+        rm ~/.poshthemes/themes.zip
+
+    - name: Install JetBrainsMono Nerd Font
+      tags:
+        - ohmyposh
+      shell:
+        cmd: oh-my-posh font install JetBrainsMono
+
+    - name: Clone dotfiles repository
+      git:
+        repo: https://github.com/mkhai9x/tempdotfiles.git
+        dest: ~/tempdotfiles
+
+    - name: Copy .zshrc to home directory
+      copy:
+        src: "~/tempdotfiles/.zshrc"
+        dest: "~/.zshrc"
+        remote_src: yes
+
+    - name: Create .config directory if it doesn't exist
+      file:
+        path: "~/.config"
+        state: directory
+        mode: "0755"
+    - name: Copy other folders to .config directory
+      copy:
+        src: "~/tempdotfiles/"
+        dest: "~/.config/"
+        remote_src: yes
+        directory_mode: yes
+    - name: Install dependencies for pyenv
+      tags:
+        - python
+        - ubuntu_packages
+      apt:
+        name:
+          - make
+          - build-essential
+          - libssl-dev
+          - zlib1g-dev
+          - libbz2-dev
+          - libreadline-dev
+          - libsqlite3-dev
+          - wget
+          - curl
+          - llvm
+          - libncurses5-dev
+          - libncursesw5-dev
+          - xz-utils
+          - tk-dev
+          - libffi-dev
+          - liblzma-dev
+          - python3-openssl
+          - git
+        state: latest
+
+    - name: Clone pyenv repository
+      tags:
+        - python
+      git:
+        repo: https://github.com/pyenv/pyenv.git
+        dest: ~/.pyenv
+    - name: Install Python 3.12 using pyenv
+      tags:
+        - python
+      shell: |
+        eval "$($HOME/.pyenv/bin/pyenv init -)"
+        $HOME/.pyenv/bin/pyenv install 3.12.0
+        $HOME/.pyenv/bin/pyenv global 3.12.0
+
+    - name: Install nvm
+      tags:
+        - node
+      shell: >
+        curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
+    - name: Install node and set version
+      tags:
+        - node
+      shell: >
+        /bin/bash -c "source ~/.nvm/nvm.sh && nvm install --lts  && nvm alias default node"
+    - name: Install tmux
+      tags:
+        - tmux
+        - ubuntu_packages
+      apt:
+        name: tmux
+        state: present
+        update_cache: yes
