@@ -34,6 +34,11 @@ return {
         top_p = 1,
         n = 1,
       },
+      chat = {
+        keymaps = {
+          close = "q",
+        },
+      },
     })
 
     vim.api.nvim_set_hl(0, "ChatGPTselectedMessage", { bg = "NONE", fg = "NONE" })
